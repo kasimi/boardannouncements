@@ -71,8 +71,25 @@ class listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.page_header_after'	=> 'display_board_announcements',
+			'core.page_header_after'		=> 'display_board_announcements_everywhere',
+			'core.index_modify_page_title'	=> 'display_board_announcements_index',
 		);
+	}
+
+	public function display_board_announcements_everywhere()
+	{
+		if (!$this->config['board_announcements_only_index'])
+		{
+			$this->display_board_announcements();
+		}
+	}
+
+	public function display_board_announcements_index()
+	{
+		if ($this->config['board_announcements_only_index'])
+		{
+			$this->display_board_announcements();
+		}
 	}
 
 	/**

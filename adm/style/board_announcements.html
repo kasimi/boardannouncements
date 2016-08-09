@@ -45,6 +45,13 @@
 				<label><input type="radio" class="radio" name="board_announcements_dismiss" value="0"<!-- IF not BOARD_ANNOUNCEMENTS_DISMISS --> checked="checked"<!-- ENDIF --> /> {L_NO}</label>
 			</dd>
 		</dl>
+		<dl>
+			<dt><label for="board_announcements_only_index">{L_BOARD_ANNOUNCEMENTS_INDEX_ONLY}{L_COLON}</label><br /><span>{L_BOARD_ANNOUNCEMENTS_INDEX_ONLY_EXPLAIN}</span></dt>
+			<dd>
+				<label><input type="radio" class="radio" id="board_announcements_only_index" name="board_announcements_only_index" value="1"<!-- IF BOARD_ANNOUNCEMENTS_ONLY_INDEX --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+				<label><input type="radio" class="radio" name="board_announcements_only_index" value="0"<!-- IF not BOARD_ANNOUNCEMENTS_ONLY_INDEX --> checked="checked"<!-- ENDIF --> /> {L_NO}</label>
+			</dd>
+		</dl>
 	</fieldset>
 
 	<!-- IF BOARD_ANNOUNCEMENTS_PREVIEW -->
