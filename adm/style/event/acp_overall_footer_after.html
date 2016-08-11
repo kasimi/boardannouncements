@@ -30,6 +30,10 @@ jQuery(function($) {
 	}).keyup(function() {
 		$(this).colpickSetColor(this.value || 'ffffff');
 	});
+
+	$('#acp_board_announcements').find('textarea').focus(function() {
+		text_name = this.name;
+	});
 });
 </script>
 
