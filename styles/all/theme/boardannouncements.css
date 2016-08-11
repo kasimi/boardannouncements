@@ -1,7 +1,7 @@
 /* style the announcement banner */
 #phpbb_announcement {
 	margin: 10px 0;
-	font-size: 1.1em;
+	font-size: 1em;
 	padding: 10px;
 	border-radius: 7px;
 	background-color: #ECD5D8; /* default color */
