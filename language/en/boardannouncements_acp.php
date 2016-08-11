@@ -53,6 +53,8 @@ $lang = array_merge($lang, array(
 	'BOARD_ANNOUNCEMENTS_BGCOLOR_EXPLAIN'	=> 'You can change the background color of the announcement using a hex code (e.g: FFFF80). Leave this field blank to use the default color.',
 
 	'BOARD_ANNOUNCEMENTS_TEXT'				=> 'Board announcement message',
+	'BOARD_ANNOUNCEMENTS_TEXT_REGISTERED'	=> 'Board announcement message for registered users',
+	'BOARD_ANNOUNCEMENTS_TEXT_GUESTS'		=> 'Board announcement message for guest users',
 	'BOARD_ANNOUNCEMENTS_PREVIEW'			=> 'Board announcement - Preview',
 
 	'BOARD_ANNOUNCEMENTS_UPDATED'			=> 'Board announcement has been updated.',
