@@ -92,6 +92,9 @@ class board_announcements_module
 			'announcement_bitfield',
 			'announcement_options',
 			'announcement_bgcolor',
+			'announcement_guests_text',
+			'announcement_guests_uid',
+			'announcement_guests_bitfield',
 		));
 
 		// If form is submitted or previewed
@@ -105,6 +108,7 @@ class board_announcements_module
 
 			// Get new announcement text and bgcolor values from the form
 			$data['announcement_text'] = $this->request->variable('board_announcements_text', '', true);
+			$data['announcement_guests_text'] = $this->request->variable('board_announcements_guests_text', '', true);
 			$data['announcement_bgcolor'] = $this->request->variable('board_announcements_bgcolor', '', true);
 
 			// Get config options from the form
@@ -112,12 +116,23 @@ class board_announcements_module
 			$allow_guests = $this->request->variable('board_announcements_guests', false);
 			$dismiss_announcements = $this->request->variable('board_announcements_dismiss', false);
 			$only_index = $this->request->variable('board_announcements_only_index', false);
+			$only_index_guests = $this->request->variable('board_announcements_only_index_guests', false);
 
 			// Prepare announcement text for storage
 			generate_text_for_storage(
 				$data['announcement_text'],
 				$data['announcement_uid'],
 				$data['announcement_bitfield'],
+				$data['announcement_options'],
+				!$this->request->variable('disable_bbcode', false),
+				!$this->request->variable('disable_magic_url', false),
+				!$this->request->variable('disable_smilies', false)
+			);
+
+			generate_text_for_storage(
+				$data['announcement_guests_text'],
+				$data['announcement_guests_uid'],
+				$data['announcement_guests_bitfield'],
 				$data['announcement_options'],
 				!$this->request->variable('disable_bbcode', false),
 				!$this->request->variable('disable_magic_url', false),
@@ -132,6 +147,7 @@ class board_announcements_module
 				$this->config->set('board_announcements_guests', $allow_guests);
 				$this->config->set('board_announcements_dismiss', $dismiss_announcements);
 				$this->config->set('board_announcements_only_index', $only_index);
+				$this->config->set('board_announcements_only_index_guests', $only_index_guests);
 
 				// Store the announcement settings to the config_table in the database
 				$this->config_text->set_array(array(
@@ -141,6 +157,10 @@ class board_announcements_module
 					'announcement_options'		=> $data['announcement_options'],
 					'announcement_bgcolor'		=> $data['announcement_bgcolor'],
 					'announcement_timestamp'	=> time(),
+					'announcement_guests_text'			=> $data['announcement_guests_text'],
+					'announcement_guests_uid'			=> $data['announcement_guests_uid'],
+					'announcement_guests_bitfield'		=> $data['announcement_guests_bitfield'],
+					'announcement_guests_timestamp'		=> time(),
 				));
 
 				// Set the board_announcements_status for all normal users
@@ -164,6 +184,7 @@ class board_announcements_module
 
 				// Destroy any cached board announcement data
 				$this->cache->destroy('_board_announcement_data');
+				$this->cache->destroy('_board_announcement_guests_data');
 
 				// Output message to user for the announcement update
 				trigger_error($this->user->lang('BOARD_ANNOUNCEMENTS_UPDATED') . adm_back_link($this->u_action));
@@ -172,13 +193,18 @@ class board_announcements_module
 
 		// Prepare a fresh announcement preview
 		$announcement_text_preview = '';
+		$announcement_guests_text_preview = '';
 		if ($this->request->is_set_post('preview'))
 		{
 			$announcement_text_preview = generate_text_for_display($data['announcement_text'], $data['announcement_uid'], $data['announcement_bitfield'], $data['announcement_options']);
+			$announcement_guests_text_preview = generate_text_for_display($data['announcement_guests_text'], $data['announcement_guests_uid'], $data['announcement_guests_bitfield'], $data['announcement_options']);
 		}
 
 		// prepare the announcement text for editing inside the textbox
 		$announcement_text_edit = generate_text_for_edit($data['announcement_text'], $data['announcement_uid'], $data['announcement_options']);
+
+		// prepare the announcement text for guests for editing inside the textbox
+		$announcement_guests_text_edit = generate_text_for_edit($data['announcement_guests_text'], $data['announcement_guests_uid'], $data['announcement_options']);
 
 		// Output data to the template
 		$this->template->assign_vars(array(
@@ -187,8 +213,11 @@ class board_announcements_module
 			'BOARD_ANNOUNCEMENTS_GUESTS'	=> isset($allow_guests) ? $allow_guests : $this->config['board_announcements_guests'],
 			'BOARD_ANNOUNCEMENTS_DISMISS'	=> isset($dismiss_announcements) ? $dismiss_announcements : $this->config['board_announcements_dismiss'],
 			'BOARD_ANNOUNCEMENTS_ONLY_INDEX' => isset($only_index) ? $only_index : $this->config['board_announcements_only_index'],
+			'BOARD_ANNOUNCEMENTS_ONLY_INDEX_GUESTS' => isset($only_index_guests) ? $only_index_guests : $this->config['board_announcements_only_index_guests'],
 			'BOARD_ANNOUNCEMENTS_TEXT'		=> $announcement_text_edit['text'],
+			'BOARD_ANNOUNCEMENTS_GUESTS_TEXT' => $announcement_guests_text_edit['text'],
 			'BOARD_ANNOUNCEMENTS_PREVIEW'	=> $announcement_text_preview,
+			'BOARD_ANNOUNCEMENTS_GUESTS_PREVIEW' => $announcement_guests_text_preview,
 			'BOARD_ANNOUNCEMENTS_BGCOLOR'	=> $data['announcement_bgcolor'],
 
 			'S_BBCODE_DISABLE_CHECKED'		=> !$announcement_text_edit['allow_bbcode'],

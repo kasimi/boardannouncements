@@ -78,55 +78,93 @@ class listener implements EventSubscriberInterface
 
 	public function display_board_announcements_everywhere()
 	{
-		if (!$this->config['board_announcements_only_index'])
-		{
-			$this->display_board_announcements();
-		}
+		$this->display_board_announcements('everywhere');
 	}
 
 	public function display_board_announcements_index()
 	{
-		if ($this->config['board_announcements_only_index'])
-		{
-			$this->display_board_announcements();
-		}
+		$this->display_board_announcements('index');
 	}
 
 	/**
 	* Display board announcements
 	*
+	* @param string $location, one of everywhere|index
 	* @return null
 	* @access public
 	*/
-	public function display_board_announcements()
+	public function display_board_announcements($location)
 	{
+		$is_registered = $this->user->data['is_registered'];
+
 		// Do not continue if announcement has been disabled
-		if (!$this->config['board_announcements_enable'])
+		if ($is_registered)
 		{
-			return;
+			if (!$this->config['board_announcements_enable'] || $this->config['board_announcements_only_index'] && $location !== 'index')
+			{
+				return;
+			}
+
+			// Get board announcement data from the cache
+			$board_announcement_data = $this->cache->get('_board_announcement_data');
+
+			if ($board_announcement_data === false)
+			{
+				// Get board announcement data from the config_text object
+				$board_announcement_data = $this->config_text->get_array(array(
+					'announcement_text',
+					'announcement_uid',
+					'announcement_bitfield',
+					'announcement_options',
+					'announcement_bgcolor',
+					'announcement_timestamp',
+				));
+
+				// Cache board announcement data
+				$this->cache->put('_board_announcement_data', $board_announcement_data);
+			}
 		}
-
-		// Get board announcement data from the cache
-		$board_announcement_data = $this->cache->get('_board_announcement_data');
-
-		if ($board_announcement_data === false)
+		else
 		{
-			// Get board announcement data from the config_text object
-			$board_announcement_data = $this->config_text->get_array(array(
-				'announcement_text',
-				'announcement_uid',
-				'announcement_bitfield',
-				'announcement_options',
-				'announcement_bgcolor',
-				'announcement_timestamp',
-			));
+			if (!$this->config['board_announcements_guests'] || $this->config['board_announcements_only_index_guests'] && $location !== 'index')
+			{
+				return;
+			}
 
-			// Cache board announcement data
-			$this->cache->put('_board_announcement_data', $board_announcement_data);
+			// Get board announcement data from the cache
+			$board_announcement_data = $this->cache->get('_board_announcement_guests_data');
+
+			if ($board_announcement_data === false)
+			{
+				// Get board announcement data from the config_text object
+				$board_announcement_data = $this->config_text->get_array(array(
+					'announcement_guests_text',
+					'announcement_guests_uid',
+					'announcement_guests_bitfield',
+					'announcement_options',
+					'announcement_bgcolor',
+					'announcement_timestamp',
+				));
+
+				$normalize_keys = array(
+					'announcement_guests_text'		=> 'announcement_text',
+					'announcement_guests_uid'		=> 'announcement_uid',
+					'announcement_guests_bitfield'	=> 'announcement_bitfield',
+				);
+
+				foreach ($normalize_keys as $old_key => $new_key)
+				{
+					$board_announcement_data[$new_key] = $board_announcement_data[$old_key];
+					unset($board_announcement_data[$old_key]);
+				}
+
+				// Cache board announcement data
+				$this->cache->put('_board_announcement_guests_data', $board_announcement_data);
+			}
 		}
 
 		// Get announcement cookie if one exists
-		$cookie = $this->request->variable($this->config['cookie_name'] . '_baid', '', true, \phpbb\request\request_interface::COOKIE);
+		$cookie = $this->request->variable($this->config['cookie_name'] . '_baid' . ($is_registered ? '' : '_guest'), '', true, \phpbb\request\request_interface::COOKIE);
 
 		// Do not continue if announcement has been dismissed
 		if (!$this->user->data['board_announcements_status'] || $cookie == $board_announcement_data['announcement_timestamp'])

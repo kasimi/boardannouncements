@@ -41,11 +41,13 @@ $lang = array_merge($lang, array(
 	'BOARD_ANNOUNCEMENTS_SETTINGS'			=> 'Board announcements settings',
 	'BOARD_ANNOUNCEMENTS_SETTINGS_EXPLAIN'	=> 'Here you can manage and create a board announcement that will be displayed on each page of your board.',
 
-	'BOARD_ANNOUNCEMENTS_ENABLE'			=> 'Display this board announcement',
-	'BOARD_ANNOUNCEMENTS_GUESTS'			=> 'Allow guests to view this board announcement',
+	'BOARD_ANNOUNCEMENTS_ENABLE'			=> 'Display the ’registered users’ board announcement',
+	'BOARD_ANNOUNCEMENTS_GUESTS'			=> 'Display the ’guests’ board announcement',
 	'BOARD_ANNOUNCEMENTS_DISMISS'			=> 'Allow users to dismiss this board announcement',
-	'BOARD_ANNOUNCEMENTS_INDEX_ONLY'		=> 'Display board announcement only on the index page',
-	'BOARD_ANNOUNCEMENTS_INDEX_ONLY_EXPLAIN' => 'Setting to no displays the board announcement on every page.',
+	'BOARD_ANNOUNCEMENTS_INDEX_ONLY'		=> 'Display the ’registered users’ board announcement only on the index page',
+	'BOARD_ANNOUNCEMENTS_INDEX_ONLY_EXPLAIN' => 'Setting to no displays the ’registered users’ board announcement on every page.',
+	'BOARD_ANNOUNCEMENTS_INDEX_ONLY_GUESTS'	=> 'Display the ’guests’ board announcement only on the index page',
+	'BOARD_ANNOUNCEMENTS_INDEX_ONLY_GUESTS_EXPLAIN' => 'Setting to no displays the ’guests’ board announcement on every page.',
 
 	'BOARD_ANNOUNCEMENTS_BGCOLOR'			=> 'Board announcement background color',
 	'BOARD_ANNOUNCEMENTS_BGCOLOR_EXPLAIN'	=> 'You can change the background color of the announcement using a hex code (e.g: FFFF80). Leave this field blank to use the default color.',
